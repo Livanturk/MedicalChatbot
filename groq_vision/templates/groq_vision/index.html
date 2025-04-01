@@ -1,0 +1,118 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Image Processing with LLaMA 3.2 90B Vision</title>
+
+  <link href="https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{% static 'groq_vision/css/custom.css' %}">
+</head>
+<body>
+  <div class="container">
+    <h1>Image Processing with LLaMA 3.2 90B Vision</h1>
+
+    <form id="processingForm" method="post" enctype="multipart/form-data">
+      {% csrf_token %}
+
+      <label for="id_image">Upload an image</label>
+      <input type="file" id="id_image" name="image" accept="image/png,image/jpeg,image/jpg">
+
+      <div id="imagePreviewContainer" class="hidden">
+        <img id="imagePreview" class="image-preview" src="" alt="Preview">
+      </div>
+
+      <label for="id_query">Enter your question about the image or general question</label>
+      <input type="text" id="id_query" name="query" required>
+
+      <div class="buttons">
+        <button type="button" id="processImageBtn">Process Image</button>
+      </div>
+    </form>
+
+    <div id="loading" class="loading hidden">
+      Processing... Please wait.
+    </div>
+
+    <div id="resultContainer" class="result-box hidden">
+      <h3>Response:</h3>
+      <div id="resultContent"></div>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const imageInput = document.getElementById('id_image');
+      const imagePreview = document.getElementById('imagePreview');
+      const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+      const processImageBtn = document.getElementById('processImageBtn');
+      const resultContainer = document.getElementById('resultContainer');
+      const resultContent = document.getElementById('resultContent');
+      const loadingIndicator = document.getElementById('loading');
+      const queryInput = document.getElementById('id_query');
+      const form = document.getElementById('processingForm');
+
+      imageInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+          const reader = new FileReader();
+          reader.onload = function(e) {
+            imagePreview.src = e.target.result;
+            imagePreviewContainer.classList.remove('hidden');
+          };
+          reader.readAsDataURL(this.files[0]);
+        } else {
+          imagePreviewContainer.classList.add('hidden');
+        }
+      });
+
+      processImageBtn.addEventListener('click', function() {
+        if (!imageInput.files || !imageInput.files[0]) {
+          alert('Please upload an image first');
+          return;
+        }
+        if (!queryInput.value.trim()) {
+          alert('Please enter a question');
+          return;
+        }
+        processRequest('process_image/');
+      });
+
+      function processRequest(endpoint) {
+        resultContainer.classList.add('hidden');
+        loadingIndicator.classList.remove('hidden');
+
+        const formData = new FormData(form);
+
+        fetch(endpoint, {
+          method: 'POST',
+          body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+          loadingIndicator.classList.add('hidden');
+          resultContainer.classList.remove('hidden');
+          if (data.error) {
+            resultContent.innerHTML = `<div class="error">${data.error}</div>`;
+          } else {
+            resultContent.innerHTML = formatResponse(data.response);
+          }
+        })
+        .catch(error => {
+          loadingIndicator.classList.add('hidden');
+          resultContainer.classList.remove('hidden');
+          resultContent.innerHTML = `<div class="error">Error: ${error.message}</div>`;
+        });
+      }
+
+      function formatResponse(text) {
+        return text
+          .replace(/\n{2,}/g, '<br><br>') // double line breaks to paragraph spacing
+          .replace(/\n/g, '<br>')         // single line breaks
+          .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // bold
+          .replace(/\*(.*?)\*/g, '<em>$1</em>'); // italic
+      }
+    });
+  </script>
+</body>
+</html>

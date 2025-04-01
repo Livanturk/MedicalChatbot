@@ -1,0 +1,94 @@
+body {
+    background-color: #0f1218;
+    color: white;
+    font-family: 'Source Sans Pro', sans-serif;
+    padding: 40px;
+  }
+  
+  .container {
+    max-width: 800px;
+    margin: auto;
+  }
+  
+  h1 {
+    font-size: 2.2rem;
+    margin-bottom: 2rem;
+  }
+  
+  label {
+    display: block;
+    margin: 20px 0 8px;
+    font-weight: 600;
+  }
+  
+  input[type="file"],
+  input[type="text"] {
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    padding: 12px 16px;
+    width: 100%;
+    border-radius: 8px;
+  }
+  
+  input[type="file"]::file-selector-button {
+    background-color: #2d3748;
+    border: 1px solid #4a5568;
+    color: white;
+    padding: 6px 12px;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  
+  .buttons {
+    margin-top: 20px;
+    display: flex;
+    gap: 10px;
+  }
+  
+  button {
+    background-color: #2d3748;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  button:hover {
+    background-color: #3a475f;
+  }
+  
+  .image-preview {
+    display: block;
+    margin: 30px auto;
+    max-width: 100%;
+    max-height: 600px;        /* Önceden 400px idi, şimdi daha büyük */
+    border-radius: 12px;
+    object-fit: contain;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3); /* Hafif gölge efekti */
+  }
+  
+  .loading {
+    color: #aaa;
+    font-style: italic;
+    margin-top: 20px;
+  }
+  
+  .result-box {
+    background-color: #1a202c;
+    padding: 1rem;
+    border-radius: 8px;
+    margin-top: 20px;
+  }
+  
+  .hidden {
+    display: none;
+  }
+  
+  .error {
+    color: red;
+    font-weight: bold;
+  }
+  
